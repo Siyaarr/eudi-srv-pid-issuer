@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pension Credential Issuer — Findynet Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #003580;
+      --blue-light: #0050b3;
+      --blue-pale: #e8f0fe;
+      --accent: #00a3e0;
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--blue);
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    header svg { flex-shrink: 0; }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+    header p { font-size: 0.85rem; opacity: 0.85; margin-top: 0.15rem; }
+
+    .container {
+      max-width: 860px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .intro {
+      background: var(--blue-pale);
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1.25rem;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .field input, .field select {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,163,224,0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    .btn:hover { background: var(--blue-light); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .qr-section {
+      text-align: center;
+      padding: 2rem;
+    }
+    .qr-section img {
+      max-width: 280px;
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .qr-section p {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .qr-section .status {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .status.waiting { background: #fef3cd; color: #856404; }
+    .status.ready { background: #d4edda; color: #155724; }
+
+    .hidden { display: none; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+    <rect width="40" height="40" rx="8" fill="white" fill-opacity="0.15"/>
+    <path d="M12 28V14h6v2h-4v4h3v2h-3v6h-2zm8-14h2l3 8 3-8h2l-4 14h-2l-4-14z" fill="white"/>
+  </svg>
+  <div>
+    <h1>Pension Credential Issuer</h1>
+    <p>Findynet Demo &mdash; Digital Pension Credential (SD-JWT VC)</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="intro">
+    This demo issues a <strong>digital pension credential</strong> as an SD-JWT Verifiable Credential.
+    Fill in the pension details below, generate a QR code, and scan it with your wallet app
+    (EUDI Wallet, Gataca, Paradym, or any OpenID4VCI-compatible wallet).
+  </div>
+
+  <!-- Step 1: Form -->
+  <div class="card" id="formCard">
+    <h2><span class="step-num">1</span> Enter pension details</h2>
+    <form id="pensionForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="given_name">Given Name</label>
+          <input type="text" id="given_name" value="Totti" required>
+        </div>
+        <div class="field">
+          <label for="family_name">Family Name</label>
+          <input type="text" id="family_name" value="Aalto" required>
+        </div>
+        <div class="field">
+          <label for="birth_date">Date of Birth</label>
+          <input type="date" id="birth_date" value="1993-03-03" required>
+        </div>
+        <div class="field">
+          <label for="personal_id">Personal ID (Henkilötunnus)</label>
+          <input type="text" id="personal_id" value="030393-995E" required>
+        </div>
+        <div class="field">
+          <label for="pension_type">Pension Type (Eläkelaji)</label>
+          <select id="pension_type">
+            <option value="KAEL">KAEL — Kansaneläke (National Pension)</option>
+            <option value="TKEL">TKEL — Työeläke (Earnings-related Pension)</option>
+            <option value="TPEL">TPEL — Työkyvyttömyyseläke (Disability Pension)</option>
+            <option value="KUEL">KUEL — Kuntoutustuki (Rehabilitation Allowance)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pension_start_date">Pension Start Date</label>
+          <input type="date" id="pension_start_date" value="2024-02-01" required>
+        </div>
+        <div class="field">
+          <label for="pension_amount">Amount (€/month)</label>
+          <input type="text" id="pension_amount" value="835.76" required>
+        </div>
+      </div>
+      <button type="submit" class="btn" id="generateBtn">
+        Generate Credential Offer
+      </button>
+    </form>
+  </div>
+
+  <!-- Step 2: QR code -->
+  <div class="card hidden" id="qrCard">
+    <h2><span class="step-num">2</span> Scan with your wallet</h2>
+    <div class="qr-section">
+      <img id="qrImage" alt="Credential Offer QR Code" src="">
+      <p>Open your wallet app and scan this QR code to receive your pension credential.</p>
+      <span class="status waiting" id="qrStatus">Waiting for wallet...</span>
+    </div>
+    <button class="btn" onclick="resetForm()" style="background: var(--muted);">
+      Issue another credential
+    </button>
+  </div>
+</div>
+
+<footer>
+  Pension Credential Issuer &mdash;
+  <a href="https://findynet.fi" target="_blank">Findynet</a> Demo &mdash;
+  SD-JWT VC (dc+sd-jwt) via OpenID4VCI
+</footer>
+
+<script>
+  const form = document.getElementById('pensionForm');
+  const formCard = document.getElementById('formCard');
+  const qrCard = document.getElementById('qrCard');
+  const qrImage = document.getElementById('qrImage');
+  const generateBtn = document.getElementById('generateBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Generating...';
+
+    const body = {
+      given_name: document.getElementById('given_name').value,
+      family_name: document.getElementById('family_name').value,
+      birth_date: document.getElementById('birth_date').value,
+      personal_id: document.getElementById('personal_id').value,
+      pension_type: document.getElementById('pension_type').value,
+      pension_start_date: document.getElementById('pension_start_date').value,
+      pension_amount: document.getElementById('pension_amount').value,
+    };
+
+    try {
+      const res = await fetch('/api/create-offer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      qrImage.src = data.qr_data_url;
+      formCard.classList.add('hidden');
+      qrCard.classList.remove('hidden');
+    } catch (err) {
+      alert('Failed to generate offer: ' + err.message);
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.textContent = 'Generate Credential Offer';
+    }
+  });
+
+  function resetForm() {
+    qrCard.classList.add('hidden');
+    formCard.classList.remove('hidden');
+  }
+</script>
+
+</body>
+</html>
